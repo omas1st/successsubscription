@@ -151,7 +151,7 @@ export default function SubscriptionForm() {
           <p><strong>Account Name:</strong> Mama Pty</p>
           <p><strong>Account Number:</strong> 62509963139</p>
           <p><strong>Reference:</strong> 0603805757</p>
-          <p><strong>Note:</strong> It is compulsory to Add "0672626266" as the reference.</p>
+          <p><strong>Note:</strong> It is compulsory to Add "0603805757" as the reference.</p>
         </div>
 
         <div id="crypto" className="payment-details">
