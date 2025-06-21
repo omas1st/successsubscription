@@ -147,6 +147,7 @@ export default function SubscriptionForm() {
 
         <div id="bank" className="payment-details">
           <h3>Bank Transfer Details</h3>
+          <p><strong>Information:</strong> If you're using CAPITEC BANK, use STORE or ATM deposit for the payment. Transfer is not allowed for CAPITEC Users only.</p>
           <p><strong>Bank:</strong> FNB Bank</p>
           <p><strong>Account Name:</strong> Mama Pty</p>
           <p><strong>Account Number:</strong> 62509963139</p>
