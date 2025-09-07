@@ -74,7 +74,7 @@ export default function SubscriptionForm() {
   // The rest of the component remains the same as your original JSX
   return (
     <div className="container">
-      <h1>Premium Subscription Form</h1>
+      <h1>Apex Subscription Form</h1>
       <form className="subscription-form" onSubmit={handleSubmit}>
         {/* Rest of your form JSX remains unchanged */}
         <div className="form-group">
