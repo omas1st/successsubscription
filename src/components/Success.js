@@ -8,7 +8,7 @@ export default function Success() {
       <h1>Subscription Successful!</h1>
       <p className="success-message">
         Thank you for subscribing! Please send your payment receipt to
-        <a href="mailto:uk49wins@gmail.com" className="admin-email"> uk49wins@gmail.com</a>
+        <a href="mailto:uk49success@gmail.com" className="admin-email"> uk49success@gmail.com</a>
         to activate your subscription.
       </p>
       <p className="support-note">
