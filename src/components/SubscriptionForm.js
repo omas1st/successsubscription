@@ -56,6 +56,25 @@ export default function SubscriptionForm() {
     alert('Bitcoin address copied!');
   };
 
+  const getErrorMessage = (err) => {
+    // Handle different types of error responses
+    if (err.response?.data?.message) {
+      return err.response.data.message;
+    } else if (err.response?.data?.error) {
+      return err.response.data.error;
+    } else if (err.response?.data) {
+      return typeof err.response.data === 'string' 
+        ? err.response.data 
+        : JSON.stringify(err.response.data);
+    } else if (err.message) {
+      return err.message;
+    } else if (typeof err === 'string') {
+      return err;
+    } else {
+      return 'Submission failed. Please check your connection and try again.';
+    }
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     
@@ -73,22 +92,23 @@ export default function SubscriptionForm() {
       
       const uploadFormData = new FormData();
       uploadFormData.append('file', receiptFile);
-      uploadFormData.append('upload_preset', 'ml_default'); // You'll need to create this in Cloudinary
+      uploadFormData.append('upload_preset', 'ml_default');
       
       const uploadResponse = await axios.post(
-        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/upload`,
+        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME || 'dn8cf0bdb'}/upload`,
         uploadFormData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-          }
+          },
+          timeout: 30000 // 30 second timeout
         }
       );
       
       console.log('Cloudinary upload response:', uploadResponse);
       
       if (!uploadResponse.data.secure_url) {
-        throw new Error('Failed to upload receipt');
+        throw new Error('Failed to upload receipt - no secure URL returned');
       }
       
       const receiptUrl = uploadResponse.data.secure_url;
@@ -107,7 +127,8 @@ export default function SubscriptionForm() {
         {
           headers: {
             'Content-Type': 'application/json',
-          }
+          },
+          timeout: 15000 // 15 second timeout
         }
       );
       
@@ -126,11 +147,10 @@ export default function SubscriptionForm() {
         stack: err.stack
       });
       
-      const errorMessage = err.response?.data?.message 
-        || err.response?.data?.error 
-        || err.message 
-        || 'Submission failed. Please check your connection and try again.';
+      // Get proper error message
+      const errorMessage = getErrorMessage(err);
       
+      // Show user-friendly error message
       alert(`Error: ${errorMessage}`);
     } finally {
       setIsUploading(false);
@@ -250,7 +270,7 @@ export default function SubscriptionForm() {
             className="form-input"
             required
           />
-          <small>Accepted formats: JPG, PNG, GIF, PDF (Max 5MB)</small>
+          <small className="file-upload-hint">Accepted formats: JPG, PNG, GIF, PDF (Max 5MB)</small>
           {receiptFile && (
             <div className="file-preview">
               <p>Selected file: {receiptFile.name}</p>
