@@ -45,3 +45,95 @@
 }
 
 .copy-button:hover { background: #047857; }
+
+/* File upload styles */
+.form-input[type="file"] {
+  padding: 1rem;
+  border: 2px dashed #e2e8f0;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+.form-input[type="file"]:hover {
+  border-color: var(--primary-color);
+  background-color: #f0f9ff;
+}
+
+.form-input[type="file"]:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-style: solid;
+}
+
+.file-upload-hint {
+  display: block;
+  margin-top: 0.5rem;
+  color: #6c757d;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.file-preview {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f0f9ff;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--primary-color);
+}
+
+.file-preview p {
+  margin: 0;
+  color: #065f46;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-preview p::before {
+  content: "✓";
+  color: #059669;
+  font-weight: bold;
+}
+
+/* Button disabled state */
+.button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button:disabled:hover {
+  background-color: #9ca3af;
+  transform: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .wallet-address {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .form-input[type="file"] {
+    padding: 0.75rem;
+  }
+  
+  .file-preview {
+    padding: 0.75rem;
+  }
+}
+
+/* Loading state animation */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.button:disabled {
+  animation: pulse 2s infinite;
+}
