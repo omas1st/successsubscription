@@ -13,13 +13,37 @@ export default function SubscriptionForm() {
     paymentMethod: '',
     paymentMade: 'yes'
   });
+  const [receiptFile, setReceiptFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
 
   const BASE = process.env.REACT_APP_API_URL || '';
-  console.log('Using API base URL:', BASE);  // Add base URL logging
+  console.log('Using API base URL:', BASE);
 
   const handleChange = e => {
     setData({ ...data, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = e => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
+      if (!validTypes.includes(file.type)) {
+        alert('Please upload a valid image (JPEG, PNG, GIF) or PDF file');
+        e.target.value = '';
+        return;
+      }
+      
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size too large. Please upload a file smaller than 5MB');
+        e.target.value = '';
+        return;
+      }
+      
+      setReceiptFile(file);
+    }
   };
 
   const showPaymentDetails = method => {
@@ -34,12 +58,52 @@ export default function SubscriptionForm() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log('Submission data:', data);  // Add request body logging
+    
+    // Validate receipt file
+    if (!receiptFile) {
+      alert('Please upload your payment receipt before submitting');
+      return;
+    }
+
+    setIsUploading(true);
     
     try {
+      // First, upload the receipt to Cloudinary
+      console.log('Uploading receipt to Cloudinary...');
+      
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', receiptFile);
+      uploadFormData.append('upload_preset', 'ml_default'); // You'll need to create this in Cloudinary
+      
+      const uploadResponse = await axios.post(
+        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/upload`,
+        uploadFormData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          }
+        }
+      );
+      
+      console.log('Cloudinary upload response:', uploadResponse);
+      
+      if (!uploadResponse.data.secure_url) {
+        throw new Error('Failed to upload receipt');
+      }
+      
+      const receiptUrl = uploadResponse.data.secure_url;
+      
+      // Now submit the form data with receipt URL
+      const submissionData = {
+        ...data,
+        receiptUrl: receiptUrl
+      };
+      
+      console.log('Submission data:', submissionData);
+      
       const response = await axios.post(
         `${BASE}/api/subscribe`,
-        data,
+        submissionData,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -47,7 +111,7 @@ export default function SubscriptionForm() {
         }
       );
       
-      console.log('Submission response:', response);  // Add response logging
+      console.log('Submission response:', response);
       
       if (response.status === 201) {
         navigate('/success');
@@ -68,15 +132,15 @@ export default function SubscriptionForm() {
         || 'Submission failed. Please check your connection and try again.';
       
       alert(`Error: ${errorMessage}`);
+    } finally {
+      setIsUploading(false);
     }
   };
 
-  // The rest of the component remains the same as your original JSX
   return (
     <div className="container">
       <h1>Apex Subscription Form</h1>
       <form className="subscription-form" onSubmit={handleSubmit}>
-        {/* Rest of your form JSX remains unchanged */}
         <div className="form-group">
           <input
             name="name"
@@ -177,7 +241,30 @@ export default function SubscriptionForm() {
           </select>
         </div>
 
-        <button type="submit" className="button">Complete Subscription</button>
+        <div className="form-group">
+          <h2>Upload Payment Receipt *</h2>
+          <input
+            type="file"
+            accept=".jpg,.jpeg,.png,.gif,.pdf,.JPG,.JPEG,.PNG,.GIF,.PDF"
+            onChange={handleFileChange}
+            className="form-input"
+            required
+          />
+          <small>Accepted formats: JPG, PNG, GIF, PDF (Max 5MB)</small>
+          {receiptFile && (
+            <div className="file-preview">
+              <p>Selected file: {receiptFile.name}</p>
+            </div>
+          )}
+        </div>
+
+        <button 
+          type="submit" 
+          className="button" 
+          disabled={isUploading}
+        >
+          {isUploading ? 'Uploading Receipt...' : 'Complete Subscription'}
+        </button>
       </form>
     </div>
   );
