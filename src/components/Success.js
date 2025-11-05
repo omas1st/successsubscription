@@ -7,9 +7,7 @@ export default function Success() {
       <div className="success-icon">✓</div>
       <h1>Subscription Successful!</h1>
       <p className="success-message">
-        Thank you for subscribing! Please send your payment receipt to
-        <a href="mailto:uk49success@gmail.com" className="admin-email"> uk49success@gmail.com</a>
-        to activate your subscription.
+        Thank you for subscribing! 
       </p>
       <p className="support-note">
         Our support team will contact you within 24 hours after verifying your payment.
