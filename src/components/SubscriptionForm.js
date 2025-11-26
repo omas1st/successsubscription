@@ -159,7 +159,7 @@ export default function SubscriptionForm() {
 
   return (
     <div className="container">
-      <h1>Apex Subscription Form</h1>
+      <h1>Subscription Form</h1>
       <form className="subscription-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <input
